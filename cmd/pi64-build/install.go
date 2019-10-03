@@ -20,7 +20,7 @@ var (
 		"apt", "systemd", "systemd-sysv", "udev", "kmod", "locales", "sudo",
 
 		// Networking packages
-		"netbase", "net-tools", "ethtool", "iproute", "iputils-ping", "ifupdown", "dhcpcd5", "firmware-brcm80211", "wpasupplicant", "ntp",
+		"netbase", "net-tools", "ethtool", "iproute2", "iputils-ping", "ifupdown", "dhcpcd5", "firmware-brcm80211", "wpasupplicant", "ntp",
 
 		// Packages required by the pi64-config CLI tool
 		"dialog", "sysbench", "wireless-tools", "parted",
@@ -56,7 +56,7 @@ func installDebian() error {
 	multistrapOpts := multistrap.Options{
 		Directory:  rootDir,
 		Arch:       "arm64",
-		Suite:      "stretch",
+		Suite:      "buster",
 		Components: []string{"main", "contrib", "non-free"},
 		Packages:   packages,
 	}
@@ -84,14 +84,14 @@ func installDebian() error {
 	}
 
 	aptSources := []byte(`
-deb http://deb.debian.org/debian stretch main contrib non-free
-deb-src http://deb.debian.org/debian stretch main contrib non-free
+deb http://deb.debian.org/debian buster main contrib non-free
+deb-src http://deb.debian.org/debian buster main contrib non-free
 
-deb http://deb.debian.org/debian stretch-updates main contrib non-free
-deb-src http://deb.debian.org/debian stretch-updates main contrib non-free
+deb http://deb.debian.org/debian buster-updates main contrib non-free
+deb-src http://deb.debian.org/debian buster-updates main contrib non-free
 
-deb http://security.debian.org/ stretch/updates main contrib non-free
-deb-src http://security.debian.org/ stretch/updates main contrib non-free
+deb http://security.debian.org/ buster/updates main contrib non-free
+deb-src http://security.debian.org/ buster/updates main contrib non-free
 `)
 
 	if err := ioutil.WriteFile("/etc/apt/sources.list", aptSources[1:], 0644); err != nil {
