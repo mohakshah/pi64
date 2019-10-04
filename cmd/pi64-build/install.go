@@ -23,7 +23,7 @@ var (
 		"netbase", "net-tools", "ethtool", "iproute2", "iputils-ping", "ifupdown", "dhcpcd5", "firmware-brcm80211", "wpasupplicant", "ntp",
 
 		// Packages required by the pi64-config CLI tool
-		"dialog", "sysbench", "wireless-tools", "parted",
+		"dialog", "stress", "wireless-tools", "parted",
 
 		// Packages required by the pi64-update CLI tool
 		"ca-certificates",

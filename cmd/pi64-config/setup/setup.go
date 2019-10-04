@@ -124,7 +124,7 @@ func configurePackages() error {
 		return err
 	}
 
-	if err := runCommand("/var/lib/dpkg/info/dash.preinst", "install"); err != nil {
+	if err := runCommand("/var/lib/dpkg/info/base-passwd.preinst", "install"); err != nil {
 		return err
 	}
 	if err := runCommand("/usr/bin/dpkg", "--configure", "-a"); err != nil {

@@ -11,7 +11,7 @@ import (
 
 func checkCPUFreq() {
 	util.AttachCommand("/usr/bin/dialog", "--infobox", "Running CPU frequency test... (this should take ~5 seconds)", "10", "80")
-	if err := exec.Command("/usr/bin/sysbench", "--test=cpu", "--cpu-max-prime=10000", "--num-threads=4", "run").Run(); err != nil {
+	if err := exec.Command("/usr/bin/stress", "--cpu", "4", "--timeout", "5").Run(); err != nil {
 		dialog.Message("Couldn't run benchmark.")
 		return
 	}
