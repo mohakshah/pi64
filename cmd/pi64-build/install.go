@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/bamarni/pi64/pkg/multistrap"
@@ -30,9 +31,17 @@ var (
 	litePackages    = []string{"ssh", "avahi-daemon"}
 	desktopPackages = []string{"task-lxde-desktop"}
 	debugPackages   = []string{"device-tree-compiler", "strace", "vim", "less"}
+
+	debianKeyringURL    = "http://deb.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2019.1_all.deb"
+	debianKeyringSHA256 = "9cefd8917f3d97a999c136aa87f04a3024408b5bc1de470de7d6dfa5e4bd4361"
 )
 
 func installDebian() error {
+	fmt.Fprintln(os.Stderr, "   Fetching debian's archive keys...")
+	if err := saveSigningKeys(); err != nil {
+		return err
+	}
+
 	fmt.Fprintln(os.Stderr, "   Running multistrap...")
 
 	packages := packages
@@ -66,7 +75,7 @@ func installDebian() error {
 	}
 	defer exit()
 
-	aptClean := exec.Command("apt-get", "clean")
+	aptClean := exec.Command("/usr/bin/qemu-aarch64-static", "/usr/bin/apt-get", "clean")
 	aptClean.Stdin = ioutil.NopCloser(bytes.NewReader(nil))
 	aptClean.Stdout, aptClean.Stderr = ioutil.Discard, ioutil.Discard
 	aptClean.Dir = "/"
@@ -90,7 +99,7 @@ deb-src http://security.debian.org/ stretch/updates main contrib non-free
 	}
 
 	// cf. https://github.com/bamarni/pi64/issues/8
-	if err := exec.Command("dpkg", "--list").Run(); err != nil {
+	if err := exec.Command("/usr/bin/qemu-aarch64-static", "/usr/bin/dpkg-query", "--list").Run(); err != nil {
 		return err
 	}
 
@@ -142,4 +151,25 @@ iface wlan0 inet manual
 	}
 
 	return os.Remove("/usr/bin/qemu-aarch64-static")
+}
+
+func saveSigningKeys() error {
+	script := exec.Command("bash", "-sex", rootDir, debianKeyringURL, debianKeyringSHA256)
+	script.Dir = buildDir
+
+	script.Stdin = strings.NewReader(`
+root_dir="$1"
+url="$2"
+sha256="$3"
+
+wget --quiet "$url" -O keyring.deb
+echo "$sha256 *keyring.deb" >SHA256SUMS
+sha256sum -c SHA256SUMS
+
+dpkg-deb -x keyring.deb "$root_dir"
+
+rm -f keyring.deb SHA256SUMS
+`)
+
+	return script.Run()
 }

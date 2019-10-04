@@ -1,6 +1,6 @@
-FROM ubuntu:17.10
+FROM ubuntu:18.04
 
-ENV GOPATH=/go PATH=/go/bin:/usr/lib/go-1.8/bin:$PATH
+ENV GOPATH=/go PATH=/go/bin:/usr/lib/go-1.10/bin:$PATH
 
 RUN apt-get update \
     && apt-get -y install \
@@ -18,7 +18,7 @@ RUN apt-get update \
         wget \
         dosfstools \
         kpartx \
-        golang-1.8-go \
+        golang-1.10-go \
         rsync \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
