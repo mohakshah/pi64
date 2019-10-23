@@ -21,6 +21,9 @@ RUN apt-get update \
         golang-1.10-go \
         rsync \
         kmod \
+        bison \
+        flex \
+        libssl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && go get \
