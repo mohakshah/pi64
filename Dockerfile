@@ -20,6 +20,7 @@ RUN apt-get update \
         kpartx \
         golang-1.10-go \
         rsync \
+        kmod \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && go get \
